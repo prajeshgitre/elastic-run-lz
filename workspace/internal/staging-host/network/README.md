@@ -43,7 +43,6 @@ module "create_service_project" {
 }
 ```
 
-
 ## Compatibility
 This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0+. If you find incompatibilities using Terraform >=0.13, please open an issue.
  If you haven't
@@ -145,6 +144,7 @@ cloud_dns = [
 | type | Type of zone to create, valid values are 'public', 'private', 'forwarding', 'peering', 'reverse\_lookup' and 'service\_directory'. | `string` | `"private"` | no |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
+
 # Google Cloud VPC Firewall Rules
 
 This module allows creation of custom VPC firewall rules.
@@ -180,16 +180,15 @@ module "firewall_rules" {
   }]
 }
 ```
-# Creation of Firewall rules from tfvars
-
+# Creation of firewall rules from tfvars
 ```hcl
 firewall_rules_list = {
-  fw-nonprod-asso1-deny-all = {
-    network_name = "vpc-nonprod-wiai-asso1-primary"
-    project_id   = "wiai-nonprod-host-vpc-33"
+  fw-prod-asso1-deny-all = {
+    network_name = "vpc-prod-wiai-asso1-primary"
+    project_id   = "wiai-prod-host-vpc-68"
     rules = [
       {
-        name                    = "fw-nonprod-asso1-deny-ingress"
+        name                    = "fw-prod-asso1-deny-ingress"
         priority                = 10000
         description             = "deny all ingress traffic"
         direction               = "INGRESS"
@@ -207,7 +206,7 @@ firewall_rules_list = {
         allow = []
       },
       {
-        name                    = "fw-nonprod-asso1-deny-egress"
+        name                    = "fw-prod-asso1-deny-egress"
         priority                = 10000
         description             = "deny all egress traffic"
         direction               = "EGRESS"
@@ -252,11 +251,6 @@ In a [firewall rule](https://cloud.google.com/firewall/docs/firewalls), you spec
 - `direction`: (Optional) Direction of traffic to which this firewall applies; default is INGRESS
 - `priority`: (Optional) Priority for this rule. This is an integer between 0 and 65535, both inclusive. When not specified, the value assumed is 1000
 
-
-
-
-
-
 # Terraform Network Module
 
 This module makes it easy to set up a new VPC Network in GCP by defining your network and subnet ranges in a concise syntax.
@@ -268,8 +262,6 @@ It supports creating:
 - Secondary ranges for the subnets (if applicable)
 
 Sub modules are provided for creating individual vpc, subnets, and routes. See the modules directory for the various sub modules usage.
-
-
 
 ## Compatibility
 

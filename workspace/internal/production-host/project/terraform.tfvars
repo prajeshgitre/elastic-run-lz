@@ -3,7 +3,6 @@ project = {
   service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
 }
 
-
 //billing account id
 billing_account = "01C4D7-B0D936-B27FBF"
 
@@ -12,9 +11,9 @@ billing_account = "01C4D7-B0D936-B27FBF"
 projects_list = {
   proj1 = {
     prefix         = "prj"
-    project_name   = "cmn-int-elasticrun"
-    project_id     = "cmn-int-elasticrun"
-    project_folder = "folders/1081601249902"
+    project_name   = "prod-int-elasticrun-host"
+    project_id     = "prod-int-elasticrun-host"
+    project_folder = "folders/704536984001"
     labels = {
 
     }
@@ -27,17 +26,20 @@ amount                  = 50000
 notification_type       = "email"
 notification_email      = "manoj.thangaraj@elastic.run" 
 notification_project_id = "prj-cmn-int-elasticrun5a"
-thresholds = [{
-  percentage = 0.5,
-  basis      = "CURRENT_SPEND"
+thresholds = [
+   {
+    percentage = 0.5,
+    basis      = "FORECASTED_SPEND"
   },
+
   {
     percentage = 0.75,
     basis      = "CURRENT_SPEND"
   },
+
   {
-    percentage = 0.9,
+    percentage = 0.9
     basis      = "CURRENT_SPEND"
   },
-
+  
 ]

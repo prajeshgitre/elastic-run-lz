@@ -10,7 +10,7 @@ variable "vpc_list" {
   }))
 }
 
-# #cloud dns variables
+#cloud dns variables
 variable "cloud_dns" {
   description = "List of Private dns"
   type = list(object({
@@ -37,7 +37,7 @@ variable "dns_network" {
   description = "vpc name for cloud dns"
 }
 
-//Shared VPC variables
+# //Shared VPC variables
 
 variable "host_project_id" {
   type        = string
@@ -90,6 +90,13 @@ variable "cloud_nat" {
       source_ip_ranges_to_nat  = list(string)
       secondary_ip_range_names = list(string)
     }))
+
+    nat_rules = list(object({
+    rule_number           = number
+    description           = string
+    match                 = string
+    source_nat_active_ips = list(string)
+  }))
   }))
   default = []
 }
@@ -104,7 +111,7 @@ variable "reserve_static_ip" {
   }))
 }
 
-#firewall variables 
+# #firewall variables 
 variable "firewall_rules_list" {
   type = map(object({
     project_id   = string
@@ -134,7 +141,7 @@ variable "firewall_rules_list" {
   }))
 }
 
-#variables for private service connection
+# variables for private service connection
 variable "private_service_access" {
   description = "private service access variable"
   type = map(object({

@@ -1,8 +1,7 @@
-# project = {
-#   name            = "wiai-bootstrap-seed",
-#   service_account = "svcacct-bootstrap-seed-tf-lz@wiai-bootstrap-seed.iam.gserviceaccount.com"
-# }
-
+project = {
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
+}
 # Organization ID
 parent_id   = "132425377817"
 
