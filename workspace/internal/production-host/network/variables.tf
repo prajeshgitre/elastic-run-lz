@@ -10,32 +10,32 @@ variable "vpc_list" {
   }))
 }
 
-#cloud dns variables
-variable "cloud_dns" {
-  description = "List of Private dns"
-  type = list(object({
-    type   = string
-    name   = string
-    domain = string
-    recordsets = list(object({
-      name    = string,
-      type    = string,
-      ttl     = number,
-      records = list(string)
-    }))
-  }))
-  default = []
-}
+# #cloud dns variables
+# variable "cloud_dns" {
+#   description = "List of Private dns"
+#   type = list(object({
+#     type   = string
+#     name   = string
+#     domain = string
+#     recordsets = list(object({
+#       name    = string,
+#       type    = string,
+#       ttl     = number,
+#       records = list(string)
+#     }))
+#   }))
+#   default = []
+# }
 
-variable "dns_project_id" {
-  type        = string
-  description = "Project id of the VPC"
-}
+# variable "dns_project_id" {
+#   type        = string
+#   description = "Project id of the VPC"
+# }
 
-variable "dns_network" {
-  type        = string
-  description = "vpc name for cloud dns"
-}
+# variable "dns_network" {
+#   type        = string
+#   description = "vpc name for cloud dns"
+# }
 
 # //Shared VPC variables
 
@@ -141,12 +141,12 @@ variable "firewall_rules_list" {
   }))
 }
 
-# variables for private service connection
-variable "private_service_access" {
-  description = "private service access variable"
-  type = map(object({
-    address  = string
-    vpc_name = string
-    name     = string
-  }))
-}
+# # variables for private service connection
+# variable "private_service_access" {
+#   description = "private service access variable"
+#   type = map(object({
+#     address  = string
+#     vpc_name = string
+#     name     = string
+#   }))
+# }

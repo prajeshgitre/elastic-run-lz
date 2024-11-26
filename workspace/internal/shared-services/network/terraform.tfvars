@@ -1,19 +1,19 @@
 project = {
-  name            = "wiai-bootstrap-seed",
-  service_account = "svcacct-bootstrap-seed-tf-lz@wiai-bootstrap-seed.iam.gserviceaccount.com"
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
 }
 
 #Cloud vpc
 vpc_list = {
-  vpc-common-service-wiai-asso1-primary = {
-    vpc_name                               = "vpc-common-service-wiai-asso1-primary"
-    project_id                             = "wiai-common-service-f0"
+  vpc-elasticrun-common-service-as2-single         = {
+    vpc_name                               = "vpc-elasticrun-common-service-as2-single"
+    project_id                             = "prj-cmn-int-elasticrun5a"
     delete_default_internet_gateway_routes = false
     subnets = [
       {
-        subnet_name           = "subnet-common-service-asso1-01"
-        subnet_ip             = "10.100.0.0/24"
-        subnet_region         = "asia-south1"
+        subnet_name           = "sb-common-service-as2-01"
+        subnet_ip             = "172.20.27.0/24"
+        subnet_region         = "asia-south2"
         subnet_private_access = "true"
         subnet_flow_logs      = "true"
         description           = "subnet for common service"
@@ -61,30 +61,22 @@ firewall_rules_list = {
 
 
 
-private_service_access = {
-  private_service_access1 = {
-    address  = "10.100.7.0"
-    vpc_name = "vpc-common-service-wiai-asso1-primary"
-    name     = "subnet-psc-common-asso1-01"
-  },
-}
-
 reserve_static_ip = [
   {
-    name         = "sip-common-static-nat-ip-01"
-    project_id   = "wiai-common-service-f0"
-    region       = "asia-south1"
+    name         = "si-common-service-as2-cloud-nat"
+    project_id   = "prj-cmn-int-elasticrun5a"
+    region       = "asia-south2"
     address_type = "EXTERNAL"
   },
 ]
 
 cloud_nat = [
   {
-    project_id                          = "wiai-common-service-f0"
-    router_network                      = "vpc-common-service-wiai-asso1-primary"
-    region                              = "asia-south1"
-    nat_name                            = "nat-common-asso1-gateway-01"
-    router_name                         = "router-common-asso1-nat-01"
+    project_id                          = "prj-cmn-int-elasticrun5a"
+    router_network                      = "vpc-elasticrun-common-service-as2-single"
+    region                              = "asia-south2"
+    nat_name                            = "cn-elasticrun-common-service-as2-01"
+    router_name                         = "cr-common-service-as2-01"
     create_router                       = true
     log_config_enable                   = false
     log_config_filter                   = "ALL"
@@ -92,7 +84,7 @@ cloud_nat = [
     enable_endpoint_independent_mapping = false
     min_ports_per_vm                    = 2048
     //static address should be declared in above static_ip_name variable
-    static_ip_name                      = ["sip-common-static-nat-ip-01"]
+    static_ip_name                      = ["si-common-service-as2-cloud-nat"]
     source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
     // "LIST_OF_SUBNETWORKS"
     subnetworks = [
@@ -104,10 +96,10 @@ cloud_nat = [
 
 vpc_peering_list = {
   vpc-peer-common-service-to-prod-01 = {
-    local_project_id = "wiai-common-service-f0"
-    local_network    = "vpc-common-service-wiai-asso1-primary"
-    peer_project_id  = "wiai-prod-host-vpc-68"
-    peer_network     = "vpc-prod-wiai-asso1-primary"
+    local_project_id = "prj-cmn-int-elasticrun5a"
+    local_network    = "vpc-elasticrun-common-service-as2-single"
+    peer_project_id  = "prj-prod-int-elasticrun-hostc9"
+    peer_network     = "vpc-elasticrun-prod-as2-shared"
   },
 }
 

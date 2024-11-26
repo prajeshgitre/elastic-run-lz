@@ -13,9 +13,14 @@ projects_list = {
     prefix         = "prj"
     project_name   = "prod-int-elasticrun-host"
     project_id     = "prod-int-elasticrun-host"
-    project_folder = "folders/704536984001"
+    project_folder = "folders/1081601249902"
     labels = {
-
+      environment = "production"
+      owner       = "manoj"
+      department  = "elasticrun"
+      customer    = "manoj"
+      businessunit = "internal"
+         
     }
   }
 }

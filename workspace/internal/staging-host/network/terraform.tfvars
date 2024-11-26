@@ -5,7 +5,7 @@
 
 vpc_list = {
   vpc-prod-wiai-asso1-primary = {
-    shared_vpc_name                        = "vpc-prod-wiai-asso1-primary"
+    shared_vpc_name                        = ""
     project_id                             = "wiai-prod-host-vpc-68"
     delete_default_internet_gateway_routes = false
     subnets = [

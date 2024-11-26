@@ -11,9 +11,10 @@
 
 //Backend GCS bucket to store state file for common enviornment resources 
 
+
 terraform {
   backend "gcs" {
-    bucket = "bucket-bootstrap-seed-asso1-terraform-state-lz-01"
-    prefix = "terraform/common-services/common-service/network/state"
+    bucket = "bkt-elasticrun-bootstrap-asso2-terraform-state-lz"
+    prefix = "terraform/internal/shared-service/network/state"
   }
 }

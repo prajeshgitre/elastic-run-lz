@@ -13,7 +13,7 @@ projects_list = {
     prefix         = "prj"
     project_name   = "stg-int-elasticrun-host"
     project_id     = "stg-int-elasticrun-host"
-    project_folder = "folders/773212550361"
+    project_folder = "folders/1081601249902"
     labels = {
 
     }

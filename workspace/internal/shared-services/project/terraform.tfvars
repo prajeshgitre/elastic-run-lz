@@ -16,6 +16,11 @@ projects_list = {
     project_id     = "cmn-int-elasticrun"
     project_folder = "folders/1081601249902"
     labels = {
+      environment = "common-service"
+      owner       = "manoj"
+      department  = "elasticrun"
+      customer    = "manoj"
+      businessunit = "internal"
 
     }
   }

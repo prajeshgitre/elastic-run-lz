@@ -1,59 +1,100 @@
-# project = {
-#   name            = "wiai-bootstrap-seed",
-#   service_account = "svcacct-bootstrap-seed-tf-lz@wiai-bootstrap-seed.iam.gserviceaccount.com"
-# }
+project = {
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
+}
+
 
 vpc_list = {
-  vpc-prod-wiai-asso1-primary = {
-    shared_vpc_name                        = "vpc-prod-wiai-asso1-primary"
-    project_id                             = "wiai-prod-host-vpc-68"
+  vpc-elasticrun-prod-as2-shared = {
+    shared_vpc_name                        = "vpc-elasticrun-prod-as2-shared"
+    project_id                             = "prj-prod-int-elasticrun-hostc9"
     delete_default_internet_gateway_routes = false
     subnets = [
       {
-        subnet_name           = ""
-        subnet_ip             = "10.200.0.0/24"
+        subnet_name           = "sb-prod-as2-db"
+        subnet_ip             = "172.20.26.0/24"
         subnet_region         = "asia-south2"
         subnet_private_access = "true"
         subnet_flow_logs      = "true"
-        description           = ""
+        description           = "db subnet"
+      },
+      {
+        subnet_name           = "sb-prod-as2-k8s-app-01"
+        subnet_ip             = "172.20.16.0/22"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke subnet"
+      },
+      {
+        subnet_name           = "sb-prod-as2-k8s-app-cp"
+        subnet_ip             = "172.20.24.0/28"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke control plane "
+      },
+       {
+        subnet_name           = "sb-prod-as2-k8s-eng-01"
+        subnet_ip             = "172.20.28.0/22"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke eng subnet "
+      },
+      {
+        subnet_name           = "sb-prod-as2-k8s-eng-cp"
+        subnet_ip             = "172.20.52.0/28"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke control plan "
       },
 
 
     ]
     secondary_ranges = {
-      subnet-prod-asso1-gke-backend = [
+      sb-prod-as2-k8s-app-01 = [
         {
-          ip_cidr_range = "10.208.32.0/20"
-          range_name    = "subnet-prod-asso2-gke-pod-backend"
+          ip_cidr_range = "172.20.0.0/20"
+          range_name    = "sb-prod-as2-k8-app-pod"
         },
         {
-          ip_cidr_range = "10.208.22.0/26"
-          range_name    = "subnet-prod-asso2-gke-svc-backend"
+          ip_cidr_range = "172.20.20.0/22"
+          range_name    = "sb-prod-as2-k8-app-svc"
         },
       ],
-
-
-
-   
-
-   
-
-
+        sb-prod-as2-k8s-eng-01 = [
+        {
+          ip_cidr_range = "172.20.32.0/20"
+          range_name    = "sb-prod-as2-k8s-eng-pod"
+        },
+        {
+          ip_cidr_range = "172.20.48.0/22"
+          range_name    = "sb-prod-as2-k8s-eng-svc"
+        },
+      ],
 
     },
   },
 }
 
 // Shared VPC Attachment Details
-host_project_id     = "prj-prod-int-elasticrun-host"
+host_project_id     = "prj-prod-int-elasticrun-hostc9"
 host_subnet_regions = ["asia-south2"]
 
-service_project_ids = ["prj-agri-grn-prod-srv-77", ]
+service_project_ids = ["prj-prod-svc-elasticrun-01-94", ]
 
-host_subnets = ["subnet-prod-grn-asso1-01",]
+host_subnets = ["sb-prod-as2-db","sb-prod-as2-k8s-app-01","sb-prod-as2-k8s-app-cp","sb-prod-as2-k8s-eng-01","sb-prod-as2-k8s-eng-cp"]
 
 host_subnet_users = {
-  subnet-prod-ews-asso1-01                = "",
+  sb-prod-as2-k8s-app-01                  = "",
+  sb-prod-as2-db                          = "",
+  sb-prod-as2-k8s-app-cp                  = "",
+  sb-prod-as2-k8s-eng-01                  = "",
+  sb-prod-as2-k8s-eng-cp                  = ""
+
+
 
 
 }
@@ -93,9 +134,9 @@ firewall_rules_list = {
 
 reserve_static_ip = [
   {
-    name         = "sip-prod-static-nat-ip-01"
-    project_id   = "wiai-prod-host-vpc-68"
-    region       = "asia-south1"
+    name         = "si-prod-shrd-as2-cloud-nat"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
+    region       = "asia-south2"
     address_type = "EXTERNAL"
 
   },
@@ -106,32 +147,22 @@ reserve_static_ip = [
 
 cloud_nat = [
   {
-    project_id                          = "prj-prod-int-elasticrun-host"
-    router_network                      = "vpc-prod-wiai-asso1-primary"
-    region                              = "asia-south1"
-    nat_name                            = "nat-prod-asso1-gateway-01"
-    router_name                         = "router-prod-asso1-nat-01"
+    project_id                          = "prj-prod-int-elasticrun-hostc9"
+    router_network                      = "vpc-elasticrun-prod-as2-shared"
+    region                              = "asia-south2"
+    nat_name                            = "cn-elasticrun-prod-as2-shrd-host-01"
+    router_name                         = "si-prod-shrd-as2-cloud-nat"
     create_router                       = true
     log_config_enable                   = true
     log_config_filter                   = "ALL"
     enable_dynamic_port_allocation      = true
     enable_endpoint_independent_mapping = false
     min_ports_per_vm                    = 256
-    static_ip_name                      = ["sip-prod-static-nat-ip-01"]
+    static_ip_name                      = ["si-prod-shrd-as2-cloud-nat"]
     source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
     subnetworks                         = []
     nat_rules                           = []
   },
 ]
 
-# private service connection
-private_service_access = {
-  private_service_access1 = {
-    address  = "10.209.2.0"
-    vpc_name = "vpc-prod-wiai-asso1-primary"
-    name     = "subnet-psc-prod-ews-asso1-01"
-  },
 
-
-
-}

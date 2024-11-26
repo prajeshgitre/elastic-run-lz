@@ -1,6 +1,6 @@
 project = {
   name            = "prj-seed-elasticrun",
-  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
+  service_account = "sa-terraform-org@prj-seed-elasticrun.iam.gserviceaccount.com"
 }
 parent_id = "1098389060758"
 org-policy = [
@@ -39,10 +39,10 @@ org-policy = [
       organization_id   = null
       folder_id         = "1098389060758"
       project_id        = null
-      enforce           = true
-      allow             = []
+      enforce           = null
+      allow             = ["1h"]
       deny              = []
-      allow_list_length = 0
+      allow_list_length = 1
       exclude_folders   = ["folders/624022159581"]
       exclude_projects  = []
     },
@@ -53,10 +53,10 @@ org-policy = [
       organization_id   = null
       folder_id         = "1098389060758"
       project_id        = null
-      enforce           = true
-      allow             = []
+      enforce           = null
+      allow             = ["DISABLE_KEY"]
       deny              = []
-      allow_list_length = 0
+      allow_list_length = 1
       exclude_folders   = ["folders/624022159581"]
       exclude_projects  = []
     },
@@ -136,15 +136,15 @@ org-policy = [
 
     {
       constraint        = "constraints/compute.disableSerialPortLogging"
-      policy_type       = "list"
+      policy_type       = "boolean"
       policy_for        = "folder"
-      organization_id   = "null"
+      organization_id   = null
       folder_id         = "1098389060758"
       project_id        = null
-      enforce           = null
+      enforce           = false
       allow             = []
       deny              = []
-      allow_list_length = 1
+      allow_list_length = 0
       exclude_folders   = ["folders/624022159581"]
       exclude_projects  = []
     },
@@ -172,9 +172,9 @@ org-policy = [
       folder_id         = "1098389060758"
       project_id        = null
       enforce           = null
-      allow             = ["all-traffic"]
+      allow             = ["1stGen", "2ndGen"]
       deny              = []
-      allow_list_length = 1
+      allow_list_length = 2
       exclude_folders   = ["folders/624022159581"]
       exclude_projects  = []
     },
@@ -294,7 +294,7 @@ org-policy = [
     },
     {
       constraint        = "constraints/compute.requireBasicQuotaInResponse"
-      policy_type       = "list"
+      policy_type       = "boolean"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -308,7 +308,7 @@ org-policy = [
     },
     {
       constraint        = "constraints/compute.requireOsConfig"
-      policy_type       = "list"
+      policy_type       = "boolean"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -322,7 +322,7 @@ org-policy = [
     },
     {
       constraint        = "constraints/compute.setNewProjectDefaultToZonalDNSOnly"
-      policy_type       = "list"
+      policy_type       = "boolean"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -348,20 +348,20 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/iam.allowedPolicyMemberDomains"
-      policy_type       = "list"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/iam.allowedPolicyMemberDomains"
+    #   policy_type       = "list"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     # {
     #   constraint        = "constraints/compute.disableAllIpv6"
@@ -528,20 +528,20 @@ org-policy = [
       exclude_projects  = []
     },
 
-    {
-      constraint        = "constraints/commerceorggovernance.marketplaceServices"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/commerceorggovernance.marketplaceServices"
+    #   policy_type       = "list"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = ["PRIVATE_MARKETPLACE"]
+    #   deny              = []
+    #   allow_list_length = 1
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     # {
     #   constraint        = "constraints/commerceorggovernance.disablePublicMarketplace"
@@ -617,20 +617,20 @@ org-policy = [
       exclude_folders   = ["folders/624022159581"]
       exclude_projects  = []
     },
-    {
-      constraint        = "constraints/appengine.runtimeDeploymentExemption"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/appengine.runtimeDeploymentExemption"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
     # {
     #   constraint        = "constraints/compute.disableSshInBrowser"
     #   policy_type       = "boolean"
@@ -673,20 +673,20 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/gcp.restrictCmekCryptoKeyProjects"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/gcp.restrictCmekCryptoKeyProjects"
+    #   policy_type       = "list"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
     # {
     #   constraint        = "constraints/gcp.restrictNonCmekServices"
     #   policy_type       = "boolean"
@@ -701,20 +701,20 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/cloudkms.minimumDestroyScheduledDuration"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/cloudkms.minimumDestroyScheduledDuration"
+    #   policy_type       = "list"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = ["in:30d"]
+    #   deny              = []
+    #   allow_list_length = 1
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
     {
       constraint        = "constraints/cloudkms.disableBeforeDestroy"
       policy_type       = "boolean"
@@ -902,7 +902,7 @@ org-policy = [
       folder_id         = "1098389060758"
       project_id        = null
       enforce           = null
-      allow             = ["in:asia-south1-locations", "in:asia-east1-locations", "in:us-central1-locations"]
+      allow             = ["in:asia-south1-locations", "in:asia-east1-locations", "in:us-central1-locations","in:asia-south2-locations"]
       deny              = []
       allow_list_length = 1
       exclude_folders   = ["folders/624022159581"]
@@ -969,7 +969,7 @@ org-policy = [
 
     {
       constraint        = "constraints/resourcemanager.allowEnabledServicesForExport"
-      policy_type       = "boolean"
+      policy_type       = "list"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -982,50 +982,50 @@ org-policy = [
       exclude_projects  = []
     },
 
-    {
-      constraint        = "constraints/resourcemanager.allowedExportDestinations"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/resourcemanager.allowedExportDestinations"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
-    {
-      constraint        = "constraints/resourcemanager.allowedImportSources"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/resourcemanager.allowedImportSources"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = ["all"]
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
-    {
-      constraint        = "constraints/serviceuser.services"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/serviceuser.services"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     # {
     #   constraint        = "constraints/essentialcontacts.disableProjectSecurityContacts"
@@ -1134,7 +1134,7 @@ org-policy = [
 
     {
       constraint        = "constraints/storage.secureHttpTransport"
-      policy_type       = "list"
+      policy_type       = "boolean"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -1147,20 +1147,20 @@ org-policy = [
       exclude_projects  = []
     },
 
-    {
-      constraint        = "constraints/storage.softDeletePolicySeconds"
-      policy_type       = "list"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/storage.softDeletePolicySeconds"
+    #   policy_type       = "list"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     # {
     #   constraint        = "constraints/iam.restrictCrossProjectServiceAccountLienRemoval"
@@ -1189,7 +1189,7 @@ org-policy = [
       deny              = []
       allow_list_length = 0
       exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
+      exclude_projects  = ["prj-prod-svc-elasticrun-01-94"]
     },
     {
       constraint        = "constraints/compute.restrictSharedVpcSubnetworks"
@@ -1247,20 +1247,20 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/compute.trustedImageProjects"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/compute.trustedImageProjects"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     {
       constraint        = "constraints/compute.restrictVpcPeering"
@@ -1274,7 +1274,7 @@ org-policy = [
       deny              = []
       allow_list_length = 0
       exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
+      exclude_projects  = ["prj-cmn-int-elasticrun5a","prj-prod-int-elasticrun-hostd1","prj-prod-int-elasticrun-hostc9"]
     },
 
     {
@@ -1336,24 +1336,24 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/compute.vmCanIpForward"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/compute.vmCanIpForward"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = []
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 
     {
       constraint        = "constraints/compute.restrictSharedVpcBackendServices"
-      policy_type       = "boolean"
+      policy_type       = "list"
       policy_for        = "folder"
       organization_id   = null
       folder_id         = "1098389060758"
@@ -1380,18 +1380,18 @@ org-policy = [
     #   exclude_folders   = ["folders/624022159581"]
     #   exclude_projects  = []
     # },
-    {
-      constraint        = "constraints/essentialcontacts.allowedContactDomains"
-      policy_type       = "boolean"
-      policy_for        = "folder"
-      organization_id   = null
-      folder_id         = "1098389060758"
-      project_id        = null
-      enforce           = true
-      allow             = []
-      deny              = []
-      allow_list_length = 0
-      exclude_folders   = ["folders/624022159581"]
-      exclude_projects  = []
-    },
+    # {
+    #   constraint        = "constraints/essentialcontacts.allowedContactDomains"
+    #   policy_type       = "boolean"
+    #   policy_for        = "folder"
+    #   organization_id   = null
+    #   folder_id         = "1098389060758"
+    #   project_id        = null
+    #   enforce           = true
+    #   allow             = ["all"]
+    #   deny              = []
+    #   allow_list_length = 0
+    #   exclude_folders   = ["folders/624022159581"]
+    #   exclude_projects  = []
+    # },
 ]

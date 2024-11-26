@@ -9,10 +9,6 @@
  * limitations under the License.
  */
 
-variable "parent_id" {
-  description = "The resource ID of the parent Folder or Organization"
-  type        = string
-}
 
 variable "parent_type" {
   description = "Parent Type : folder or organization"
