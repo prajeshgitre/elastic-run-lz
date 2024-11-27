@@ -4,47 +4,85 @@
 # }
 
 vpc_list = {
-  vpc-nonprod-wiai-asso1-primary = {
-    shared_vpc_name                        = "vpc-nonprod-wiai-asso1-primary"
-    project_id                             = "wiai-nonprod-host-vpc-33"
+  vpc-prod-wiai-asso1-primary = {
+    shared_vpc_name                        = ""
+    project_id                             = "wiai-prod-host-vpc-68"
     delete_default_internet_gateway_routes = false
-    subnets = [                                    
-     
+    subnets = [
       {
-        subnet_name           = "subnet-nonprod-learn-asso1-01"
-        subnet_ip             = "10.64.4.0/24"
+        subnet_name           = "subnet-prod-tlib-asso1-regular"
+        subnet_ip             = "10.200.0.0/24"
         subnet_region         = "asia-south1"
         subnet_private_access = "true"
         subnet_flow_logs      = "true"
-        description           = "subnet for non-prod learn"
-      }
-    ]
-  
-    
+        description           = "regular subnet for project wiai-tbet-tlib-nonprod"
+      },
 
+
+    ]
     secondary_ranges = {
-      subnet-nonprod-orf-asso1-gke-backend = [
+      subnet-prod-orf-asso1-gke-backend = [
         {
-          ip_cidr_range = "10.64.32.0/20"
-          range_name    = "subnet-nonprod-orf-asso1-gke-pod-backend"
+          ip_cidr_range = "10.208.32.0/20"
+          range_name    = "subnet-prod-orf-asso1-gke-pod-backend"
         },
         {
-          ip_cidr_range = "10.64.22.0/24"
-          range_name    = "subnet-nonprod-orf-asso1-gke-svc-backend"
+          ip_cidr_range = "10.208.22.0/26"
+          range_name    = "subnet-prod-orf-asso1-gke-svc-backend"
         },
-     ],
-   
-    }
-  }
+      ],
+
+
+
+      subnet-prod-tlib-asso1-gke-tfy = [
+        {
+          ip_cidr_range = "10.200.6.0/23"
+          range_name    = "subnet-prod-tlib-asso1-gke-pod-tfy"
+        },
+        {
+          ip_cidr_range = "10.200.3.0/24"
+          range_name    = "subnet-prod-tlib-asso1-gke-svc-tfy"
+        },
+      ],
+
+      subnet-prod-opht-asso1-gke-tfy = [
+        {
+          ip_cidr_range = "10.220.14.0/23"
+          range_name    = "subnet-prod-opht-asso1-gke-pod-tfy"
+        },
+        {
+          ip_cidr_range = "10.220.11.0/24"
+          range_name    = "subnet-prod-opht-asso1-gke-svc-tfy"
+        },
+      ],
+
+
+
+    },
+  },
+}
+
+// Shared VPC Attachment Details
+host_project_id     = "wiai-prod-host-vpc-68"
+host_subnet_regions = ["asia-south1"]
+
+service_project_ids = ["wiai-agri-grn-prod-srv-77", ]
+
+host_subnets = ["subnet-prod-grn-asso1-01",]
+
+host_subnet_users = {
+  subnet-prod-ews-asso1-01                = "",
+
+
 }
 
 firewall_rules_list = {
-  fw-nonprod-asso1-deny-all = {
-    network_name = "vpc-nonprod-wiai-asso1-primary"
-    project_id   = "wiai-nonprod-host-vpc-33"
+  fw-prod-asso1-deny-all = {
+    network_name = "vpc-prod-wiai-asso1-primary"
+    project_id   = "wiai-prod-host-vpc-68"
     rules = [
       {
-        name                    = "fw-nonprod-asso1-deny-ingress"
+        name                    = "fw-prod-asso1-deny-ingress"
         priority                = 10000
         description             = "deny all ingress traffic"
         direction               = "INGRESS"
@@ -54,318 +92,59 @@ firewall_rules_list = {
         target_tags             = []
         target_service_accounts = null
         log_config              = null
-        deny  = [{
-          protocol="all"
-          ports = []
-        }
-        ]   
-          log_config              = {
-        metadata = "EXCLUDE_ALL_METADATA"
-      }           
+        deny = [{
+          protocol = "all"
+          ports    = []
+          }
+        ]
         allow = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
       },
-  #     {
-  #       name                    = "fw-nonprod-asso1-deny-egress"
-  #       priority                = 10000
-  #       description             = "deny all egress traffic"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["0.0.0.0/0"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = []
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = [{
-  #         protocol="all"
-  #         ports = []
-  #       }
-  #       ]       
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }       
-  #       allow = []
-  #     },
-  #       {
-  #       name                    = "fw-nonprod-asso1-allow-egress-swym-cloudsql-to-aws-rds"
-  #       priority                = 7000
-  #       description             = "deny all ingress traffic"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["36.4.0.0/16"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = null
-  #       target_service_accounts = ["p915141199183-qp1ffx@gcp-sa-cloud-sql.iam.gserviceaccount.com"]
-  #       log_config              = null
-  #       deny  = [ ]              
-  #       allow = [{
-  #         protocol="tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     },
-  #     {
-  #       name                    = "fw-nonprod-asso1-allow-ingress-aws-rds-to-sp-cloudsql"
-  #       priority                = 7000
-  #       description             = "deny all ingress traffic"
-  #       direction               = "INGRESS"
-  #       ranges                  = ["36.4.0.0/16"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = null
-  #       target_service_accounts = ["p915141199183-qp1ffx@gcp-sa-cloud-sql.iam.gserviceaccount.com"]
-  #       log_config              = null
-  #          deny  = [ ]              
-  #         allow = [{
-  #         protocol="tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     },
-  #    {
-  #       name                    = "fw-nonprod-asso1-allow-nat-egress"
-  #       priority                = 8000
-  #       description             = "all nat ingress traffic"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["0.0.0.0/0"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = ["nat"]
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = []              
-  #       allow = [{
-  #         protocol= "all"
-  #         ports = []
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     },  
-  #       {
-  #       name                    = "fw-nonprod-asso1-allow-iap-ingress"
-  #       priority                = 8000
-  #       description             = "all iap ingress traffic"
-  #       direction               = "INGRESS"
-  #       ranges                  = ["35.235.240.0/20"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = ["ssh","rdp"]
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = []              
-  #       allow = [{
-  #         protocol= "tcp"
-  #         ports = ["3389","22","3306","1433","5432","5433"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     }, 
-  
+ 
 
-             
-  #      {
-  #       name                    = "fw-nonprod-asso1-allow-app-to-db"
-  #       priority                = 7000
-  #       description             = "fw-swym-vm-to-db"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["10.64.10.0/24"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = ["swym-nonprod-app"]
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = []              
-  #       allow = [{
-  #         protocol= "tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     }, 
-  #   ]
-  # }
-  
-  #  fw-nonprod-anthro-asso1-allow-app-to-db = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #     {
-  #       name                    = "fw-nonprod-anthro-asso1-allow-app-to-db"
-  #       priority                = 7000
-  #       description             = "fw-anthro-vm-to-db"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["10.60.10.0/24"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = ["anth-nonprod"]
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = []              
-  #       allow = [{
-  #         protocol= "tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     }, 
-      
-  #   ] 
-  # },
-  
-  # fw-nonprod-swym-asso1-cloudsql-to-aws-rds = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #     {
-  #       name                    = "fw-nonprod-swym-asso1-cloudsql-to-aws-rds"
-  #       priority                = 7000
-  #       description             = "deny all ingress traffic"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["36.4.0.0/16"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = null
-  #       target_service_accounts = ["p915141199183-qp1ffx@gcp-sa-cloud-sql.iam.gserviceaccount.com"]
-  #       log_config              = null
-  #       deny  = [ ]              
-  #       allow = [{
-  #         protocol="tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     },
-      
-  #   ] 
-  # },
-  # fw-nonprod-swym-asso1-cloudsql-to-aws-rds = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #   {
-  #       name                    = "fw-nonprod-swym-asso1-cloudsql-to-aws-rds"
-  #       priority                = 7000
-  #       description             = "deny all ingress traffic"
-  #       direction               = "INGRESS"
-  #       ranges                  = ["36.4.0.0/16"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = null
-  #       target_service_accounts = ["p915141199183-qp1ffx@gcp-sa-cloud-sql.iam.gserviceaccount.com"]
-  #       log_config              = null
-  #          deny  = [ ]              
-  #         allow = [{
-  #         protocol="tcp"
-  #         ports = ["3306"]
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     },
-      
-  #   ] 
-  # },
-  #   fw-nonprod-asso1-twingate-connector-to-all = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #     {
-  #       name                    = "fw-nonprod-asso1-twingate-connector-to-all"
-  #       priority                = 7000
-  #       description             = "fw-nonprod-twingate to all instance"
-  #       direction               = "INGRESS"
-  #       ranges                  = []
-  #       source_tags             = ["twingate-connector"]
-  #       source_service_accounts = null
-  #       target_tags             = []
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny  = []              
-  #       allow = [{
-  #         protocol= "all"
-  #         ports = []
-  #       }
-  #       ]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     }, 
-  #   ] 
-  # },
-  #  fw-prod-asso1-hc-ingress-01 = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #  {
-  #       name                    = "fw-nonprod-asso1-hc-ingress-01"
-  #       priority                = 8000
-  #       description             = "allow health check"
-  #       direction               = "INGRESS"
-  #       ranges                  = ["35.191.0.0/16", "130.211.0.0/22"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = []
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny                    = []
-  #       allow = [{
-  #         protocol = "tcp"
-  #         ports    = []
-  #       }]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     } 
-  #   ]
-  # },
-  #   fw-nonprod-catb-asso1-sqlproxy-allow-egress = {
-  #   network_name = "vpc-nonprod-wiai-asso1-primary"
-  #   project_id   = "wiai-nonprod-host-vpc-33"
-  #   rules = [
-  #  {
-  #       name                    = "fw-nonprod-catb-asso1-sqlproxy-allow-egress"
-  #       priority                = 7000
-  #       description             = "allow egress"
-  #       direction               = "EGRESS"
-  #       ranges                  = ["10.56.2.0/24"]
-  #       source_tags             = null
-  #       source_service_accounts = null
-  #       target_tags             = ["sql-proxy"]
-  #       target_service_accounts = null
-  #       log_config              = null
-  #       deny                    = []
-  #       allow = [{
-  #         protocol = "tcp"
-  #         ports    = []
-  #       }]
-  #         log_config              = {
-  #       metadata = "EXCLUDE_ALL_METADATA"
-  #     }
-  #     } 
+
     ]
   },
-  
-  
+  fw-nonprod-asso1-twingate-connector-to-all = {
+    network_name = "vpc-prod-wiai-asso1-primary"
+    project_id   = "wiai-prod-host-vpc-68"
+    rules = [
+      {
+        name                    = "fw-prod-asso1-twingate-connector-to-all"
+        priority                = 7000
+        description             = "fw-prod-twingate to all instance"
+        direction               = "INGRESS"
+        ranges                  = []
+        source_tags             = ["twingate-connector"]
+        source_service_accounts = null
+        target_tags             = []
+        target_service_accounts = null
+        log_config              = null
+        deny                    = []
+        allow = [{
+          protocol = "all"
+          ports    = []
+          }
+        ]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+      },
+
+    ]
+
+  },
+
+
+
+
 }
 
-dns_network    = "vpc-nonprod-wiai-asso1-primary"
-dns_project_id = "wiai-nonprod-host-vpc-33"
+dns_network    = "vpc-prod-wiai-asso1-primary"
+dns_project_id = "wiai-prod-host-vpc-68"
 cloud_dns = [
   {
     type   = "private"
@@ -1189,15 +968,22 @@ cloud_dns = [
   #   ]
   # },
 
+
 ]
 
 reserve_static_ip = [
   {
-    name         = "sip-nonprod-static-nat-ip-01"
-    project_id   = "wiai-nonprod-host-vpc-33"
+    name         = "sip-prod-static-nat-ip-01"
+    project_id   = "wiai-prod-host-vpc-68"
     region       = "asia-south1"
     address_type = "EXTERNAL"
 
+  },
+  {
+    name         = "sip-prod-static-nat-ip-02"
+    project_id   = "wiai-prod-host-vpc-68"
+    region       = "asia-south1"
+    address_type = "EXTERNAL"
   },
 
 
@@ -1205,43 +991,32 @@ reserve_static_ip = [
 
 cloud_nat = [
   {
-    project_id                          = "wiai-nonprod-host-vpc-33"
-    router_network                      = "vpc-nonprod-wiai-asso1-primary"
+    project_id                          = "wiai-prod-host-vpc-68"
+    router_network                      = "vpc-prod-wiai-asso1-primary"
     region                              = "asia-south1"
-    nat_name                            = "nat-nonprod-asso1-gateway-01"
-    router_name                         = "router-nonprod-asso1-nat-01"
+    nat_name                            = "nat-prod-asso1-gateway-01"
+    router_name                         = "router-prod-asso1-nat-01"
     create_router                       = true
-    log_config_enable                   = false
+    log_config_enable                   = true
     log_config_filter                   = "ALL"
     enable_dynamic_port_allocation      = true
     enable_endpoint_independent_mapping = false
-    min_ports_per_vm                    = 2048
-    //static address should be declared in above static_ip_name variable
-    static_ip_name                      = ["sip-nonprod-static-nat-ip-01","sip-nonprod-static-nat-ip-02","sip-nonprod-static-nat-ip-03"]
+    min_ports_per_vm                    = 256
+    static_ip_name                      = ["sip-prod-static-nat-ip-01", "sip-prod-static-nat-ip-02"]
     source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
-    // "LIST_OF_SUBNETWORKS"
-    subnetworks = [
-    ]
+    subnetworks                         = []
+    nat_rules                           = []
   },
 ]
 
 # private service connection
 private_service_access = {
   private_service_access1 = {
-    address  = "10.64.10.0"
-    vpc_name = "vpc-nonprod-wiai-asso1-primary"
-    name     = "subnet-psc-nonprod-swayamprabha-asso1-01"
+    address  = "10.209.2.0"
+    vpc_name = "vpc-prod-wiai-asso1-primary"
+    name     = "subnet-psc-prod-ews-asso1-01"
   },
 
-}
 
-// Shared VPC Attachment Details
-host_project_id     = "-host-vpc-33"
-host_subnet_regions = ["asia-south1"]
-
-service_project_ids = ["nonprod-srv-5f",]
-
-host_subnet_users = {
-  subnet-nonprod-asso1-01 = "",
 
 }

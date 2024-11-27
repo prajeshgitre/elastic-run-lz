@@ -34,4 +34,5 @@ module "cloud-nat" {
   min_ports_per_vm                    = each.value.min_ports_per_vm
   enable_endpoint_independent_mapping = each.value.enable_endpoint_independent_mapping
   source_subnetwork_ip_ranges_to_nat  = each.value.source_subnetwork_ip_ranges_to_nat
+  nat_rules = each.value.nat_rules
 }

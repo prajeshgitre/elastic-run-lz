@@ -14,5 +14,5 @@ module "net-shared-vpc-access" {
   host_subnets        = var.host_subnets
   host_subnet_regions = var.host_subnet_regions
   host_subnet_users   = var.host_subnet_users
-  depends_on          = [google_compute_shared_vpc_host_project.shared_vpc_host]
+  depends_on          = [google_compute_shared_vpc_host_project.shared_vpc_host, module.create_vpc]
 }

@@ -1,27 +1,32 @@
-# project = {
-#   name            = "opensourcetools-poc",
-#   service_account = "terraform-service-account-01@opensourcetools-poc.iam.gserviceaccount.com"
-# }
+project = {
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
+}
 
 
 #organization details
-parent_id   = "173522509326" # change to organization id currently its folder id
-parent_type = "organizations"
+parent_id   = "1098389060758" 
+parent_type = "folders"
 
 
-# Level-1 main folders
-main_folders_1 = ["elastic-run",]
-
-# Level-2 folders inside each Level-1 main folder
-main_folders_2 = {
-  internal = ["internal"]
-  common   = ["customer"]
+main_folders = {
+  "fldr-internal" = ["fldr-internal"]  
+  "fldr-customer" = ["fldr-customer"]  
 }
 
-# Level-3 subfolders inside each Level-2 folder
+# Sub folders configuration (Level-3)
 sub_folders = {
-  internal = ["staging", "production", "common-services"]
-  common   = ["staging", "production", "common-services"]
+  "fldr-internal" = [
+    "fldr-int-staging",      
+    "fldr-int-production",      
+    "fldr-int-cmn-service"   
+  ],
+  
+  "fldr-customer" = [
+    "fldr-cx-staging",      
+    "fldr-cx-production",      
+    "fldr-cx-cmn-service"    
+  ]
 }
 
 

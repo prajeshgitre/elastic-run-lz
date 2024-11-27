@@ -12,7 +12,7 @@ module "log_router" {
   }
   source                 = "../../../modules/terraform-google-log-export/"
   for_each               = toset(var.log_folders)
-  destination_uri        = "storage.googleapis.com/bucket-common-service-asso1-logging-${data.google_folder.folders["${each.key}"].display_name}"
+  destination_uri        = "storage.googleapis.com/bkt-common-service-asso2-logging-${data.google_folder.folders["${each.key}"].display_name}"
   filter                 = var.log_filter
   log_sink_name          = "log-router-common-service-${data.google_folder.folders["${each.key}"].display_name}"
   parent_resource_id     = each.key
@@ -29,7 +29,7 @@ module "destination" {
   }
   source           = "../../../modules/terraform-google-storage/"
   for_each         = toset(var.log_folders)
-  name             = "bucket-common-service-asso1-logging-${data.google_folder.folders["${each.key}"].display_name}"
+  name             = "bkt-common-service-asso2-logging-${data.google_folder.folders["${each.key}"].display_name}"
   versioning       = false
   project_id       = var.bucket_project
   location         = var.bucket_location
@@ -41,7 +41,7 @@ module "destination" {
 resource "google_storage_bucket_iam_member" "storage_sink_member" {
   provider   = google.project
   for_each   = toset(var.log_folders)
-  bucket     = "bucket-common-service-asso1-logging-${data.google_folder.folders["${each.key}"].display_name}"
+  bucket     = "bkt-common-service-asso2-logging-${data.google_folder.folders["${each.key}"].display_name}"
   role       = "roles/storage.legacyBucketWriter"
   member     = module.log_router[each.key].writer_identity
   depends_on = [module.destination]

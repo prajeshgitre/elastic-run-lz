@@ -22,7 +22,7 @@ module "create_project" {
 
 #Module to budget notification channel
 module "host_project_budget_notification_channel" {
-    providers = {
+      providers = {
     google      = google.project
     google-beta = google-beta.project-beta
   }
@@ -37,7 +37,7 @@ module "host_project_budget_notification_channel" {
 
 #Module to create budget alert
 module "budget_host_project" {
-    providers = {
+      providers = {
     google      = google.project
     google-beta = google-beta.project-beta
   }
