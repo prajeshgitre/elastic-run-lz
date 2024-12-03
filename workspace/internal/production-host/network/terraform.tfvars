@@ -160,6 +160,7 @@ firewall_rules_list = {
         deny                    = []
         allow = {
           protocol = "icmp"
+          ports = null
         }
         allow = [{
           protocol = "tcp"
