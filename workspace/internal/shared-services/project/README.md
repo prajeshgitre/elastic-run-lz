@@ -21,82 +21,56 @@ module "ou_folders" {
     google      = google.project
     google-beta = google-beta.project-beta
   }
-  source = "../../../modules/terraform-google-folders"
-  parent = format("%s/%s", var.parent_type, var.parent_id)
-  names  = var.ou_folders
+}
+
+project = {
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
 }
 
 
-module "org_policy_env" {
-  for_each  = { for x in local.dev : x.parent_name => x }
-  source    = "./dev_policy"
-  folder_id = module.bu_folders[each.value.parent_name].ids[each.value.sub_folder_name[0]]
-}
+// billing account id
+billing_account = "01C4D7-B0D936-B27FBF"
 
-#Module for creation lavel-2 folders
-module "prod_folders" {
-    providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
+
+# Details of projects
+projects_list = {
+  proj1 = {
+    prefix         = "prj"
+    project_name   = "cmn-int-elasticrun"
+    project_id     = "cmn-int-elasticrun"
+    project_folder = "folders/1081601249902"
+    labels = {
+      environment = "common-service"
+      owner       = "manoj"
+      department  = "elasticrun"
+      customer    = "manoj"
+      businessunit = "internal"
+
+    }
   }
-  for_each   = toset(var.prod_folders)
-  source     = "../../../modules/terraform-google-folders"
-  parent     = module.ou_folders.ids[each.value]
-  names      = ["${each.value}-prod"]
-  depends_on = [module.ou_folders]
 }
 
-#Module for creation lavel-2 folders
-module "non_prod_folders" {
-    providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  for_each   = toset(var.non_prod_folders)
-  source     = "../../../modules/terraform-google-folders"
-  parent     = module.ou_folders.ids[each.value]
-  names      = ["${each.value}-nonprod"]
-  depends_on = [module.ou_folders]
-}
-
-```
-## Creation of folder from tfvars
-```hcl
-#Variable assignment for level 1 folder creation 
-## All folder names
-ou_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-  "wiai-common-services"
+ # budget alert details
+amount                  = 50000
+notification_type       = "email"
+notification_email      = "manoj.thangaraj@elastic.run" 
+notification_project_id = "prj-cmn-int-elasticrun5a"
+thresholds = [{
+  percentage = 0.5,
+  basis      = "CURRENT_SPEND"
+  },
+  {
+    percentage = 0.75,
+    basis      = "CURRENT_SPEND"
+  },
+  {
+    percentage = 0.9,
+    basis      = "CURRENT_SPEND"
+  },
 
 ]
-## Folder which contain prod folder
-prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-]
-## Folder which contain non-prod folder
-non_prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-statesai",
-  "wiai-shared",
-]
+
 ```
 Functional examples are included in the
 [examples](./examples/) directory.

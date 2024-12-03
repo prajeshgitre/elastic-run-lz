@@ -13,111 +13,76 @@ The resources/services/activations/deletions that this module will create/trigge
 
 ## Usage
 
-Basic usage of this module is as follows:
+#  Project
+
+This module allows you to create Host projects. It
+creates projects and configures aspects like Billing budget, notification channel.
+
+## Usage
 
 ```hcl
-module "ou_folders" {
-    providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  source = "../../../modules/terraform-google-folders"
-  parent = format("%s/%s", var.parent_type, var.parent_id)
-  names  = var.ou_folders
+module "create_project" {
+  source          = "../../../modules/terraform-google-project-factory"
+  for_each        = var.projects_list
+  name            = each.value.project_name
+  project_id      = format("%s%s", each.value.project_id, random_id.project_id_suffix.hex)
+  folder_id       = each.value.project_folder
+  labels          = each.value.labels
+  billing_account = var.billing_account
+  activate_apis   = var.activate_apis
 }
-
-
-module "org_policy_env" {
-  for_each  = { for x in local.dev : x.parent_name => x }
-  source    = "./dev_policy"
-  folder_id = module.bu_folders[each.value.parent_name].ids[each.value.sub_folder_name[0]]
-}
-
-#Module for creation lavel-2 folders
-module "prod_folders" {
-    providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  for_each   = toset(var.prod_folders)
-  source     = "../../../modules/terraform-google-folders"
-  parent     = module.ou_folders.ids[each.value]
-  names      = ["${each.value}-prod"]
-  depends_on = [module.ou_folders]
-}
-
-#Module for creation lavel-2 folders
-module "non_prod_folders" {
-    providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  for_each   = toset(var.non_prod_folders)
-  source     = "../../../modules/terraform-google-folders"
-  parent     = module.ou_folders.ids[each.value]
-  names      = ["${each.value}-nonprod"]
-  depends_on = [module.ou_folders]
-}
-
 ```
-## Creation of folder from tfvars
+# Creation of project from tfvars
+project = {
+  name            = "prj-seed-elasticrun",
+  service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
+}
+projects_list = {
+  proj1 = {
+    prefix         = "prj"
+    project_name   = "prod-int-elasticrun-host"
+    project_id     = "prod-int-elasticrun-host"
+    project_folder = "folders/1081601249902"
+    labels = {
+      environment = "production"
+      owner       = "manoj"
+      department  = "elasticrun"
+      customer    = "manoj"
+      businessunit = "internal"
+         
+    }
+  }
+}
+# Creation of budget notification channel  from the tfvars 
 ```hcl
-#Variable assignment for level 1 folder creation 
-## All folder names
-ou_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-  "wiai-common-services"
-
-]
-## Folder which contain prod folder
-prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-]
-## Folder which contain non-prod folder
-non_prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-statesai",
-  "wiai-shared",
-]
+module "budget_notification_channel" {
+  for_each   = toset(local.project_ids)
+  source     = "../../../modules/terraform-google-budget/monitoring_notification_channel"
+  notification_display_name = "Notification channel for ${each.key}"
+  notification_type = var.notification_type
+  notification_project = each.key
+  email_address = var.email_address
+}
 ```
-Functional examples are included in the
-[examples](./examples/) directory.
+#budget alert details
+amount                  = 50000
+notification_type       = "email"
+notification_email      = "manoj.thangaraj@elastic.run" 
+notification_project_id = "prj-cmn-int-elasticrun5a"
+thresholds = [
+   {
+    percentage = 0.5,
+    basis      = "FORECASTED_SPEND"
+  },
 
-<!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-## Inputs
+  {
+    percentage = 0.75,
+    basis      = "CURRENT_SPEND"
+  },
 
-| Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
-| env_folders | Folder names without sub folder and policy attached  | `list(string)` | `[]` | no |
-| bu_list | Folder names with sub folder and policy attached  | `list(string)` | `[]` | no |
-| parent_id | The resource id of the parent Folder or Organization.| `string` | n/a | yes |
-| parent_type | The resource type of the parent Folder or Organization.| `string` | n/a | yes |
-
-<!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
-
-### Service Account
-
-A service account with the following roles must be used to provision
-the resources of this module:
-
-- Folder Creator: `roles/resourcemanager.folderCreator`
-
+  {
+    percentage = 0.9
+    basis      = "CURRENT_SPEND"
+  },
+  
+]

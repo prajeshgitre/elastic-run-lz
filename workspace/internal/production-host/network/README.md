@@ -11,116 +11,8 @@ This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0
 0.12.x-compatible version of this module, the last released version
 intended for Terraform 0.12.x is [9.2.0].
 
-```hcl
-#resource for adding suffix to project_id
-resource "random_id" "project_id_suffix" {
-  byte_length = 1
-}
-//Module for creation of prod host project under common service folder
-module "create_project" {
-  source          = "../../../../modules/terraform-google-projects"
-  for_each        = var.projects_list
-  name            = each.value.project_name
-  parent          = each.value.project_folder
-  prefix          = each.value.prefix
-  project_id      = format("%s%s", each.value.project_id, random_id.project_id_suffix.hex)
-  labels          = each.value.labels
-  billing_account = var.billing_account
-  activate_apis   = var.activate_apis
-}
-
-//Module for creation of service project
-module "create_service_project" {
-  source          = "../../../../modules/terraform-google-projects"
-  for_each        = var.service_projects_list
-  name            = each.value.project_name
-  parent          = each.value.project_folder
-  prefix          = each.value.prefix
-  project_id      = format("%s%s", each.value.project_id, random_id.project_id_suffix.hex)
-  labels          = each.value.labels
-  billing_account = var.billing_account
-  activate_apis   = var.activate_apis
-}
-```
-
-## Compatibility
-This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0+. If you find incompatibilities using Terraform >=0.13, please open an issue.
- If you haven't
-[upgraded](https://www.terraform.io/upgrade-guides/0-13.html) and need a Terraform
-0.12.x-compatible version of this module, the last released version
-intended for Terraform 0.12.x is [v3.1.0](https://registry.terraform.io/modules/terraform-google-modules/-cloud-dns/google/v3.1.0).
-
 ## Usage
 
-Basic usage of this module for a private zone is as follows:
-
-```hcl
-// DATA Block for fetching network self link url
-data "google_compute_network" "network" {
-  name    = "<network-name>"
-  project = "<host-project-id>"
-}
-
-data "google_compute_network" "network" {
-  provider = google.project
-  name     = var.dns_network
-  project  = var.dns_project_id
-}
-
-module "cloud-dns" {
-  providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  source                             = "../../../../modules/terraform-google-cloud-dns"
-  for_each                           = { for dns in var.cloud_dns : dns.name => dns }
-  project_id                         = var.dns_project_id
-  type                               = each.value.type
-  name                               = each.value.name
-  domain                             = each.value.domain
-  private_visibility_config_networks = [data.google_compute_network.network.self_link]
-  recordsets                         = each.value.recordsets
-}
-```
-
-# Creation of cloud DNS  from the tfvars
-```hcl
-dns_network    = "vpc-seed-wiai-asso1-primary"
-dns_project_id = "wiai-bootstrap-seed"
-cloud_dns = [
-  {
-    type   = "private"
-    name   = "accounts-google-com"
-    domain = "accounts.google.com."
-    recordsets = [
-      {
-        name = "private"
-        type = "A"
-        ttl  = 300
-        records = [
-          "199.36.153.8", "199.36.153.9", "199.36.153.10", "199.36.153.11"
-        ]
-      },
-      {
-        name = "*"
-        type = "CNAME"
-        ttl  = 300
-        records = [
-          "private.accounts.google.com.",
-        ]
-      },
-      {
-        name = ""
-        type = "A"
-        ttl  = 300
-        records = [
-          "199.36.153.8", "199.36.153.9", "199.36.153.10", "199.36.153.11"
-        ]
-      },
-    ]
-  },
-]
-```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -153,39 +45,12 @@ This module allows creation of custom VPC firewall rules.
 
 Variable `rules` details are available [here](#rules). Basic usage of this module is as follows:
 
-```hcl
-module "firewall_rules" {
-  source       = "../../modules/terraform-google-network/modules/firewall-rules"
-  project_id   = var.project_id
-  network_name = module.vpc.network_name
-
-  rules = [{
-    name                    = "allow-ssh-ingress"
-    description             = null
-    direction               = "INGRESS"
-    priority                = null
-    source_ranges           = ["0.0.0.0/0"]
-    source_tags             = null
-    source_service_accounts = null
-    target_tags             = ["ssh"]
-    target_service_accounts = null
-    allow = [{
-      protocol = "tcp"
-      ports    = ["22"]
-    }]
-    deny = []
-    log_config = {
-      metadata = "INCLUDE_ALL_METADATA"
-    }
-  }]
-}
-```
 # Creation of firewall rules from tfvars
 ```hcl
 firewall_rules_list = {
   fw-prod-asso1-deny-all = {
-    network_name = "vpc-prod-wiai-asso1-primary"
-    project_id   = "wiai-prod-host-vpc-68"
+    network_name = ""
+    project_id   = ""
     rules = [
       {
         name                    = "fw-prod-asso1-deny-ingress"
@@ -198,35 +63,30 @@ firewall_rules_list = {
         target_tags             = []
         target_service_accounts = null
         log_config              = null
-        deny  = [{
-          protocol="all"
-          ports = []
-        }
-        ]              
+        deny = [{
+          protocol = "all"
+          ports    = []
+          }
+        ]
         allow = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
       },
-      {
-        name                    = "fw-prod-asso1-deny-egress"
-        priority                = 10000
-        description             = "deny all egress traffic"
-        direction               = "EGRESS"
-        ranges                  = ["0.0.0.0/0"]
-        source_tags             = null
-        source_service_accounts = null
-        target_tags             = []
-        target_service_accounts = null
-        log_config              = null
-        deny  = [{
-          protocol="all"
-          ports = []
-        }
-        ]              
-        allow = []
-      }
     ]
   }
-}
-```
+
+    
+  }
+  reserve_static_ip = []
+  {
+    name         = "si-prod-shrd-as2-cloud-nat"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
+    region       = "asia-south2"
+    address_type = "EXTERNAL"
+
+  },
+  
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -319,29 +179,102 @@ module "vpc" {
 }
 ```
 # Creation of VPC and subnet from tfvars
-```hcl
+
 vpc_list = {
-  vpc-common-service-wiai-asso1-primary = {
-    vpc_name                               = "vpc-common-service-wiai-asso1-primary"
-    project_id                             = "wiai-common-service-f0"
+  vpc-elasticrun-prod-as2-shared = {
+    shared_vpc_name                        = "vpc-elasticrun-prod-as2-shared"
+    project_id                             = "prj-prod-int-elasticrun-hostc9"
     delete_default_internet_gateway_routes = false
     subnets = [
       {
-        subnet_name           = "subnet-common-service-asso1-01"
-        subnet_ip             = "10.100.0.0/24"
-        subnet_region         = "asia-south1"
+        subnet_name           = "sb-prod-as2-db"
+        subnet_ip             = "172.20.26.0/24"
+        subnet_region         = "asia-south2"
         subnet_private_access = "true"
-        subnet_flow_logs      = "false"
-        description           = "subnet for common service"
+        subnet_flow_logs      = "true"
+        description           = "db subnet"
       },
-    ]
-      secondary_ranges = {
+      {
+        subnet_name           = "sb-prod-as2-k8s-app-01"
+        subnet_ip             = "172.20.16.0/22"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke subnet"
+      },
+      {
+        subnet_name           = "sb-prod-as2-k8s-app-cp"
+        subnet_ip             = "172.20.24.0/28"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke control plane "
+      },
+       {
+        subnet_name           = "sb-prod-as2-k8s-eng-01"
+        subnet_ip             = "172.20.28.0/22"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke eng subnet "
+      },
+      {
+        subnet_name           = "sb-prod-as2-k8s-eng-cp"
+        subnet_ip             = "172.20.52.0/28"
+        subnet_region         = "asia-south2"
+        subnet_private_access = "true"
+        subnet_flow_logs      = "true"
+        description           = "gke control plan "
+      },
 
-      }
-  }
+
+    ]
+    secondary_ranges = {
+      sb-prod-as2-k8s-app-01 = [
+        {
+          ip_cidr_range = "172.20.0.0/20"
+          range_name    = "sb-prod-as2-k8-app-pod"
+        },
+        {
+          ip_cidr_range = "172.20.20.0/22"
+          range_name    = "sb-prod-as2-k8-app-svc"
+        },
+      ],
+        sb-prod-as2-k8s-eng-01 = [
+        {
+          ip_cidr_range = "172.20.32.0/20"
+          range_name    = "sb-prod-as2-k8s-eng-pod"
+        },
+        {
+          ip_cidr_range = "172.20.48.0/22"
+          range_name    = "sb-prod-as2-k8s-eng-svc"
+        },
+      ],
+
+    },
+  },
 }
 ```
-  
+# creation of cloud nat
+cloud_nat = [
+  {
+    project_id                          = "prj-prod-int-elasticrun-hostc9"
+    router_network                      = "vpc-elasticrun-prod-as2-shared"
+    region                              = "asia-south2"
+    nat_name                            = "cn-elasticrun-prod-as2-shrd-host-01"
+    router_name                         = "si-prod-shrd-as2-cloud-nat"
+    create_router                       = true
+    log_config_enable                   = true
+    log_config_filter                   = "ALL"
+    enable_dynamic_port_allocation      = true
+    enable_endpoint_independent_mapping = false
+    min_ports_per_vm                    = 256
+    static_ip_name                      = ["si-prod-shrd-as2-cloud-nat"]
+    source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+    subnetworks                         = []
+    nat_rules                           = []
+  },
+]
 
 Then perform the following commands on the root folder:
 

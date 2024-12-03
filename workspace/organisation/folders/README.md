@@ -64,39 +64,25 @@ module "non_prod_folders" {
 ```hcl
 #Variable assignment for level 1 folder creation 
 ## All folder names
-ou_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-  "wiai-common-services"
+main_folders = {
+  "fldr-internal" = ["fldr-internal"]  
+  "fldr-customer" = ["fldr-customer"]  
+}
 
-]
-## Folder which contain prod folder
-prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-demos",
-  "wiai-statesai",
-  "wiai-shared",
-]
-## Folder which contain non-prod folder
-non_prod_folders = [
-  "wiai-agri",
-  "wiai-edu",
-  "wiai-tb",
-  "wiai-health",
-  "wiai-mnch",
-  "wiai-statesai",
-  "wiai-shared",
-]
+# Sub folders configuration (Level-3)
+sub_folders = {
+  "fldr-internal" = [
+    "fldr-int-staging",      
+    "fldr-int-production",      
+    "fldr-int-cmn-service"   
+  ],
+  
+  "fldr-customer" = [
+    "fldr-cx-staging",      
+    "fldr-cx-production",      
+    "fldr-cx-cmn-service"    
+  ]
+}
 ```
 Functional examples are included in the
 [examples](./examples/) directory.

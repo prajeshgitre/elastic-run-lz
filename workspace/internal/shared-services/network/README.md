@@ -29,20 +29,6 @@ module "create_project" {
   activate_apis   = var.activate_apis
 }
 
-//Module for creation of service project
-module "create_service_project" {
-  source          = "../../../../modules/terraform-google-projects"
-  for_each        = var.service_projects_list
-  name            = each.value.project_name
-  parent          = each.value.project_folder
-  prefix          = each.value.prefix
-  project_id      = format("%s%s", each.value.project_id, random_id.project_id_suffix.hex)
-  labels          = each.value.labels
-  billing_account = var.billing_account
-  activate_apis   = var.activate_apis
-}
-```
-
 
 ## Compatibility
 This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0+. If you find incompatibilities using Terraform >=0.13, please open an issue.
@@ -52,77 +38,6 @@ This module is meant for use with Terraform 0.13+ and tested using Terraform 1.0
 intended for Terraform 0.12.x is [v3.1.0](https://registry.terraform.io/modules/terraform-google-modules/-cloud-dns/google/v3.1.0).
 
 
-## Usage
-
-Basic usage of this module for a private zone is as follows:
-
-```hcl
-// DATA Block for fetching network self link url
-data "google_compute_network" "network" {
-  name    = "<network-name>"
-  project = "<host-project-id>"
-}
-
-data "google_compute_network" "network" {
-  provider = google.project
-  name     = var.dns_network
-  project  = var.dns_project_id
-}
-
-module "cloud-dns" {
-  providers = {
-    google      = google.project
-    google-beta = google-beta.project-beta
-  }
-  source                             = "../../../../modules/terraform-google-cloud-dns"
-  for_each                           = { for dns in var.cloud_dns : dns.name => dns }
-  project_id                         = var.dns_project_id
-  type                               = each.value.type
-  name                               = each.value.name
-  domain                             = each.value.domain
-  private_visibility_config_networks = [data.google_compute_network.network.self_link]
-  recordsets                         = each.value.recordsets
-}
-```
-
-# Creation of cloud DNS  from the tfvars
-```hcl
-dns_network    = "vpc-seed-wiai-asso1-primary"
-dns_project_id = "wiai-bootstrap-seed"
-cloud_dns = [
-  {
-    type   = "private"
-    name   = "accounts-google-com"
-    domain = "accounts.google.com."
-    recordsets = [
-      {
-        name = "private"
-        type = "A"
-        ttl  = 300
-        records = [
-          "199.36.153.8", "199.36.153.9", "199.36.153.10", "199.36.153.11"
-        ]
-      },
-      {
-        name = "*"
-        type = "CNAME"
-        ttl  = 300
-        records = [
-          "private.accounts.google.com.",
-        ]
-      },
-      {
-        name = ""
-        type = "A"
-        ttl  = 300
-        records = [
-          "199.36.153.8", "199.36.153.9", "199.36.153.10", "199.36.153.11"
-        ]
-      },
-    ]
-  },
-]
-```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -146,7 +61,6 @@ cloud_dns = [
 | type | Type of zone to create, valid values are 'public', 'private', 'forwarding', 'peering', 'reverse\_lookup' and 'service\_directory'. | `string` | `"private"` | no |
 
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
-
 
 
 ## Upgrading
@@ -182,24 +96,7 @@ The resources created/managed by this module are:
 
 ## Usage
 
-Basic usage of this module is as follows:
-
-```hcl
-//Data block to get VPC details
-data "google_compute_network" "local" {
-  for_each = var.vpc_peering_list
-  name     = each.value.local_network
-  project  = each.value.local_project_id
-}
-
-//Data block to get VPC details
-data "google_compute_network" "peer" {
-  for_each = var.vpc_peering_list
-  name     = each.value.peer_network
-  project  = each.value.peer_project_id
-}
-
-//module for creation of VPC Peering
+# module for creation of VPC Peering
 module "peering" {
   providers = {
     google      = google.project
@@ -218,20 +115,14 @@ module "peering" {
 ```
 # Creation of VPC Peering from tfvars
 ```hcl
-<!-- vpc_peering_list = {
-  vpc-peer-common-service-to-nonprod-01 = {
-    local_project_id = "wiai-common-service-f0"
-    local_network    = "vpc-common-service-wiai-asso1-primary"
-    peer_project_id  = "wiai-nonprod-host-vpc-33"
-    peer_network     = "vpc-nonprod-wiai-asso1-primary"
-  },
+vpc_peering_list = {
   vpc-peer-common-service-to-prod-01 = {
-    local_project_id = "wiai-common-service-f0"
-    local_network    = "vpc-common-service-wiai-asso1-primary"
-    peer_project_id  = "wiai-prod-host-vpc-68"
-    peer_network     = "vpc-prod-wiai-asso1-primary"
+    local_project_id = "prj-cmn-int-elasticrun5a"
+    local_network    = "vpc-elasticrun-common-service-as2-single"
+    peer_project_id  = "prj-prod-int-elasticrun-hostc9"
+    peer_network     = "vpc-elasticrun-prod-as2-shared"
   },
-} -->
+}
 ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
@@ -272,72 +163,95 @@ intended for Terraform 0.12.x is [2.6.0].
 ## Usage
 You can go to the examples folder, however the usage of the module could be like this in your own main.tf file:
 
-```hcl
-module "vpc" {
-    source  = "../../modules/terraform-google-network"
-    project_id   = "<PROJECT ID>"
-    network_name = "example-vpc"
-
-    subnets = [
-        {
-            subnet_name           = "subnet-01"
-            subnet_ip             = "10.10.10.0/24"
-            subnet_region         = "us-west1"
-        },
-        {
-            subnet_name           = "subnet-02"
-            subnet_ip             = "10.10.20.0/24"
-            subnet_region         = "us-west1"
-            subnet_private_access = "true"
-            subnet_flow_logs      = "true"
-            description           = "This subnet has a description"
-        },
-        {
-            subnet_name               = "subnet-03"
-            subnet_ip                 = "10.10.30.0/24"
-            subnet_region             = "us-west1"
-            subnet_flow_logs          = "true"
-            subnet_flow_logs_interval = "INTERVAL_10_MIN"
-            subnet_flow_logs_sampling = 0.7
-            subnet_flow_logs_metadata = "INCLUDE_ALL_METADATA"
-        }
-    ]
-
-    secondary_ranges = {
-        subnet-01 = [
-            {
-                range_name    = "subnet-01-secondary-01"
-                ip_cidr_range = "192.168.64.0/24"
-            },
-        ]
-
-        subnet-02 = []
-    }
-}
-```
 # Creation of VPC and subnet from tfvars
 ```hcl
 vpc_list = {
-  vpc-common-service-wiai-asso1-primary = {
-    vpc_name                               = "vpc-common-service-wiai-asso1-primary"
-    project_id                             = "wiai-common-service-f0"
+  vpc-elasticrun-common-service-as2-single         = {
+    vpc_name                               = "vpc-elasticrun-common-service-as2-single"
+    project_id                             = "prj-cmn-int-elasticrun5a"
     delete_default_internet_gateway_routes = false
     subnets = [
       {
-        subnet_name           = "subnet-common-service-asso1-01"
-        subnet_ip             = "10.100.0.0/24"
-        subnet_region         = "asia-south1"
+        subnet_name           = "sb-common-service-as2-01"
+        subnet_ip             = "172.20.27.0/24"
+        subnet_region         = "asia-south2"
         subnet_private_access = "true"
-        subnet_flow_logs      = "false"
+        subnet_flow_logs      = "true"
         description           = "subnet for common service"
       },
     ]
       secondary_ranges = {
 
       }
-  }
+  
+  },
 }
 ```
+firewall_rules_list = {
+    fw-common-asso1-deny-all = {
+    network_name = "vpc-common-service-wiai-asso1-primary"
+    project_id   = "wiai-common-service-f0"
+    rules = [
+      {
+        name                    = "fw-common-asso1-deny-ingress"
+        priority                = 10000
+        description             = "deny all ingress traffic"
+        direction               = "INGRESS"
+        ranges                  = ["0.0.0.0/0"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = []
+        target_service_accounts = null
+        log_config              = null
+        deny  = [{
+          protocol="all"
+          ports = []
+        }
+        ]              
+        allow = []
+        log_config              = {
+            metadata = "EXCLUDE_ALL_METADATA"
+        }
+      },
+     
+
+    ]
+    },
+ 
+}
+
+
+
+reserve_static_ip = [
+  {
+    name         = "si-common-service-as2-cloud-nat"
+    project_id   = "prj-cmn-int-elasticrun5a"
+    region       = "asia-south2"
+    address_type = "EXTERNAL"
+  },
+]
+
+cloud_nat = [
+  {
+    project_id                          = "prj-cmn-int-elasticrun5a"
+    router_network                      = "vpc-elasticrun-common-service-as2-single"
+    region                              = "asia-south2"
+    nat_name                            = "cn-elasticrun-common-service-as2-01"
+    router_name                         = "cr-common-service-as2-01"
+    create_router                       = true
+    log_config_enable                   = false
+    log_config_filter                   = "ALL"
+    enable_dynamic_port_allocation      = true
+    enable_endpoint_independent_mapping = false
+    min_ports_per_vm                    = 2048
+    //static address should be declared in above static_ip_name variable
+    static_ip_name                      = ["si-common-service-as2-cloud-nat"]
+    source_subnetwork_ip_ranges_to_nat  = "ALL_SUBNETWORKS_ALL_IP_RANGES"
+    // "LIST_OF_SUBNETWORKS"
+    subnetworks = [
+    ]
+  },
+]
   
 
 Then perform the following commands on the root folder:
