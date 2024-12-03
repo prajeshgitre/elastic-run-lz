@@ -85,7 +85,7 @@ host_subnet_regions = ["asia-south2"]
 
 service_project_ids = ["prj-prod-svc-elasticrun-01-94", ]
 
-host_subnets = ["sb-prod-as2-db", "sb-prod-as2-k8s-app-01", "sb-prod-as2-k8s-app-cp", "sb-prod-as2-k8s-eng-01", "sb-prod-as2-k8s-eng-cp"]
+host_subnets = ["sb-prod-as2-db", "sb-prod-as2-k8s-app-01", "sb-prod-as2-k8s-eng-01", ]
 
 host_subnet_users = {
   sb-prod-as2-k8s-app-01 = "",
@@ -94,37 +94,34 @@ host_subnet_users = {
   sb-prod-as2-k8s-eng-01 = "",
   # sb-prod-as2-k8s-eng-cp = ""
 
-
-
-
 }
 
 firewall_rules_list = {
   fw-prod-asso1-deny-all = {
-    network_name = ""
-    project_id   = ""
+    network_name = "vpc-elasticrun-prod-as2-shared"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
     rules = [
-      {
-        name                    = "fw-prod-asso1-deny-ingress"
-        priority                = 10000
-        description             = "deny all ingress traffic"
-        direction               = "INGRESS"
-        ranges                  = ["0.0.0.0/0"]
-        source_tags             = null
-        source_service_accounts = null
-        target_tags             = []
-        target_service_accounts = null
-        log_config              = null
-        deny = [{
-          protocol = "all"
-          ports    = []
-          }
-        ]
-        allow = []
-        log_config = {
-          metadata = "EXCLUDE_ALL_METADATA"
-        }
-      },
+      # {
+      #   name                    = "fw-prod-asso1-deny-ingress"
+      #   priority                = 10000
+      #   description             = "deny all ingress traffic"
+      #   direction               = "INGRESS"
+      #   ranges                  = ["0.0.0.0/0"]
+      #   source_tags             = null
+      #   source_service_accounts = null
+      #   target_tags             = []
+      #   target_service_accounts = null
+      #   log_config              = null
+      #   deny = [{
+      #     protocol = "all"
+      #     ports    = []
+      #     }
+      #   ]
+      #   allow = []
+      #   log_config = {
+      #     metadata = "EXCLUDE_ALL_METADATA"
+      #   }
+      # },
 
       {
         name                    = "fw-prod-ingress-allow-iap"
@@ -161,9 +158,12 @@ firewall_rules_list = {
         target_service_accounts = null
         log_config              = null
         deny                    = []
+        allow = {
+          protocol = "icmp"
+        }
         allow = [{
           protocol = "tcp"
-          ports    = ["3389", "22", "icmp"]
+          ports    = ["3389", "22"]
           }
         ]
         deny = []
@@ -175,8 +175,6 @@ firewall_rules_list = {
   }
 }
 
-
-
 reserve_static_ip = [
   {
     name         = "si-prod-shrd-as2-cloud-nat"
@@ -185,9 +183,6 @@ reserve_static_ip = [
     address_type = "EXTERNAL"
 
   },
-
-
-
 ]
 
 cloud_nat = [
