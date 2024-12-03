@@ -34,7 +34,7 @@ vpc_list = {
       #   subnet_flow_logs      = "true"
       #   description           = "gke control plane "
       # },
-       {
+      {
         subnet_name           = "sb-prod-as2-k8s-eng-01"
         subnet_ip             = "172.20.28.0/22"
         subnet_region         = "asia-south2"
@@ -64,7 +64,7 @@ vpc_list = {
           range_name    = "sb-prod-as2-k8-app-svc"
         },
       ],
-        sb-prod-as2-k8s-eng-01 = [
+      sb-prod-as2-k8s-eng-01 = [
         {
           ip_cidr_range = "172.20.32.0/20"
           range_name    = "sb-prod-as2-k8s-eng-pod"
@@ -85,14 +85,14 @@ host_subnet_regions = ["asia-south2"]
 
 service_project_ids = ["prj-prod-svc-elasticrun-01-94", ]
 
-host_subnets = ["sb-prod-as2-db","sb-prod-as2-k8s-app-01","sb-prod-as2-k8s-app-cp","sb-prod-as2-k8s-eng-01","sb-prod-as2-k8s-eng-cp"]
+host_subnets = ["sb-prod-as2-db", "sb-prod-as2-k8s-app-01", "sb-prod-as2-k8s-app-cp", "sb-prod-as2-k8s-eng-01", "sb-prod-as2-k8s-eng-cp"]
 
 host_subnet_users = {
-  sb-prod-as2-k8s-app-01                  = "",
-  sb-prod-as2-db                          = "",
-  sb-prod-as2-k8s-app-cp                  = "",
-  sb-prod-as2-k8s-eng-01                  = "",
-  sb-prod-as2-k8s-eng-cp                  = ""
+  sb-prod-as2-k8s-app-01 = "",
+  sb-prod-as2-db         = "",
+  # sb-prod-as2-k8s-app-cp = "",
+  sb-prod-as2-k8s-eng-01 = "",
+  # sb-prod-as2-k8s-eng-cp = ""
 
 
 
@@ -125,12 +125,57 @@ firewall_rules_list = {
           metadata = "EXCLUDE_ALL_METADATA"
         }
       },
+
+      {
+        name                    = "fw-prod-ingress-allow-iap"
+        priority                = 8000
+        description             = "all nat ingress traffic"
+        direction               = "INGRESS"
+        ranges                  = ["35.235.240.0/20"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = ["ssh", "rdp"]
+        target_service_accounts = null
+        log_config              = null
+        deny                    = []
+        allow = [{
+          protocol = "tcp"
+          ports    = ["3389", "22"]
+          }
+        ]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+      },
+
+      {
+        name                    = "fw-prod-ingress-allow-azure-gcp"
+        priority                = 8000
+        description             = "all nat ingress traffic"
+        direction               = "INGRESS"
+        ranges                  = ["10.210.0.0/16"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = ["ssh", "rdp"]
+        target_service_accounts = null
+        log_config              = null
+        deny                    = []
+        allow = [{
+          protocol = "tcp"
+          ports    = ["3389", "22", "icmp"]
+          }
+        ]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+      }
     ]
   }
+}
 
-    
-  }
-  
+
 
 reserve_static_ip = [
   {
@@ -140,7 +185,7 @@ reserve_static_ip = [
     address_type = "EXTERNAL"
 
   },
-  
+
 
 
 ]

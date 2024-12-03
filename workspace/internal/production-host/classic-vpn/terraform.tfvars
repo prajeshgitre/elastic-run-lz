@@ -14,13 +14,13 @@ vpn_list = {
         tunnel_name             = "vpn-er-int-prd-azure-gcp-classic-as2-tunnel-01"
         peer_ip                 = "4.224.144.158"
         shared_secret           = "El@sticRun_!#%"
-        remote_traffic_selector = ["172.20.0.0/16"]
+        remote_traffic_selector = ["10.210.0.0/16"]
       },
       {
         tunnel_name             = "vpn-er-int-prd-azure-gcp-classic-as2-tunnel-02"
         peer_ip                 = "4.224.144.42"
         shared_secret           = "El@sticRun_!#%"
-        remote_traffic_selector = ["172.20.0.0/16"]
+        remote_traffic_selector = ["10.210.0.0/16"]
       }
 
     ]

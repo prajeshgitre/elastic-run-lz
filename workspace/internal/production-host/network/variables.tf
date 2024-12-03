@@ -92,11 +92,11 @@ variable "cloud_nat" {
     }))
 
     nat_rules = list(object({
-    rule_number           = number
-    description           = string
-    match                 = string
-    source_nat_active_ips = list(string)
-  }))
+      rule_number           = number
+      description           = string
+      match                 = string
+      source_nat_active_ips = list(string)
+    }))
   }))
   default = []
 }
