@@ -86,7 +86,7 @@ firewall_rules_list = {
     address_type = "EXTERNAL"
 
   },
-  
+  ```
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Inputs
 
@@ -179,7 +179,7 @@ module "vpc" {
 }
 ```
 # Creation of VPC and subnet from tfvars
-
+```hcl
 vpc_list = {
   vpc-elasticrun-prod-as2-shared = {
     shared_vpc_name                        = "vpc-elasticrun-prod-as2-shared"
@@ -256,6 +256,7 @@ vpc_list = {
 }
 ```
 # creation of cloud nat
+```hcl
 cloud_nat = [
   {
     project_id                          = "prj-prod-int-elasticrun-hostc9"
@@ -275,7 +276,7 @@ cloud_nat = [
     nat_rules                           = []
   },
 ]
-
+```
 Then perform the following commands on the root folder:
 
 - `terraform init` to get the plugins

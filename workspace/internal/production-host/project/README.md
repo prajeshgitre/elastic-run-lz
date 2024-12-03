@@ -33,6 +33,7 @@ module "create_project" {
 }
 ```
 # Creation of project from tfvars
+```hcl
 project = {
   name            = "prj-seed-elasticrun",
   service_account = "sa-terraform@prj-seed-elasticrun.iam.gserviceaccount.com"
@@ -53,6 +54,7 @@ projects_list = {
     }
   }
 }
+```
 # Creation of budget notification channel  from the tfvars 
 ```hcl
 module "budget_notification_channel" {
@@ -64,7 +66,7 @@ module "budget_notification_channel" {
   email_address = var.email_address
 }
 ```
-#budget alert details
+# budget alert details
 amount                  = 50000
 notification_type       = "email"
 notification_email      = "manoj.thangaraj@elastic.run" 
