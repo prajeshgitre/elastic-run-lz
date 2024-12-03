@@ -26,14 +26,14 @@ vpc_list = {
         subnet_flow_logs      = "true"
         description           = "gke subnet"
       },
-      {
-        subnet_name           = "sb-prod-as2-k8s-app-cp"
-        subnet_ip             = "172.20.24.0/28"
-        subnet_region         = "asia-south2"
-        subnet_private_access = "true"
-        subnet_flow_logs      = "true"
-        description           = "gke control plane "
-      },
+      # {
+      #   subnet_name           = "sb-prod-as2-k8s-app-cp"
+      #   subnet_ip             = "172.20.24.0/28"
+      #   subnet_region         = "asia-south2"
+      #   subnet_private_access = "true"
+      #   subnet_flow_logs      = "true"
+      #   description           = "gke control plane "
+      # },
        {
         subnet_name           = "sb-prod-as2-k8s-eng-01"
         subnet_ip             = "172.20.28.0/22"
@@ -42,14 +42,14 @@ vpc_list = {
         subnet_flow_logs      = "true"
         description           = "gke eng subnet "
       },
-      {
-        subnet_name           = "sb-prod-as2-k8s-eng-cp"
-        subnet_ip             = "172.20.52.0/28"
-        subnet_region         = "asia-south2"
-        subnet_private_access = "true"
-        subnet_flow_logs      = "true"
-        description           = "gke control plan "
-      },
+      # {
+      #   subnet_name           = "sb-prod-as2-k8s-eng-cp"
+      #   subnet_ip             = "172.20.52.0/28"
+      #   subnet_region         = "asia-south2"
+      #   subnet_private_access = "true"
+      #   subnet_flow_logs      = "true"
+      #   description           = "gke control plan "
+      # },
 
 
     ]

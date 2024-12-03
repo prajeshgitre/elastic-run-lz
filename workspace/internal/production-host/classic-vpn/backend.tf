@@ -13,7 +13,7 @@
 
 terraform {
   backend "gcs" {
-    bucket = "bucket-bootstrap-seed-asso1-terraform-state-lz-01"
+    bucket = "bkt-elasticrun-bootstrap-asso2-terraform-state-lz"
     prefix = "terraform/common-services/prod-host/classic-vpn/state"
   }
 }
