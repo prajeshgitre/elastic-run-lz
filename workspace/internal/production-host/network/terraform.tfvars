@@ -34,13 +34,14 @@ vpc_list = {
         subnet_flow_logs      = "true"
         description           = "gke control plane "
       },
-       {
+      {
         subnet_name           = "sb-prod-as2-k8s-eng-01"
         subnet_ip             = "172.20.28.0/22"
         subnet_region         = "asia-south2"
         subnet_private_access = "true"
         subnet_flow_logs      = "true"
         description           = "gke eng subnet "
+        
       },
       {
         subnet_name           = "sb-prod-as2-k8s-eng-cp"
@@ -64,7 +65,7 @@ vpc_list = {
           range_name    = "sb-prod-as2-k8-app-svc"
         },
       ],
-        sb-prod-as2-k8s-eng-01 = [
+      sb-prod-as2-k8s-eng-01 = [
         {
           ip_cidr_range = "172.20.32.0/20"
           range_name    = "sb-prod-as2-k8s-eng-pod"
@@ -85,14 +86,14 @@ host_subnet_regions = ["asia-south2"]
 
 service_project_ids = ["prj-prod-svc-elasticrun-01-94", ]
 
-host_subnets = ["sb-prod-as2-db","sb-prod-as2-k8s-app-01","sb-prod-as2-k8s-app-cp","sb-prod-as2-k8s-eng-01","sb-prod-as2-k8s-eng-cp"]
+host_subnets = ["sb-prod-as2-db", "sb-prod-as2-k8s-app-01", "sb-prod-as2-k8s-app-cp", "sb-prod-as2-k8s-eng-01", "sb-prod-as2-k8s-eng-cp"]
 
 host_subnet_users = {
-  sb-prod-as2-k8s-app-01                  = "",
-  sb-prod-as2-db                          = "",
-  sb-prod-as2-k8s-app-cp                  = "",
-  sb-prod-as2-k8s-eng-01                  = "",
-  sb-prod-as2-k8s-eng-cp                  = ""
+  sb-prod-as2-k8s-app-01 = "user:anurag.sanghwi@elastic.run,user:gyaneshwar.kumar@elastic.run,user:shreyas.daripadhar@elastic.run",
+  sb-prod-as2-db         = "user:anurag.sanghwi@elastic.run,user:gyaneshwar.kumar@elastic.run,user:shreyas.daripadhar@elastic.run",
+  sb-prod-as2-k8s-app-cp = "",
+  sb-prod-as2-k8s-eng-01 = "user:anurag.sanghwi@elastic.run,user:gyaneshwar.kumar@elastic.run,user:shreyas.daripadhar@elastic.run",
+  sb-prod-as2-k8s-eng-cp = ""
 
 
 
@@ -100,37 +101,137 @@ host_subnet_users = {
 }
 
 firewall_rules_list = {
-  fw-prod-asso1-deny-all = {
-    network_name = ""
-    project_id   = ""
+  fw-prod-ingress-allow-iap = {
+    network_name = "vpc-elasticrun-prod-as2-shared"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
     rules = [
       {
-        name                    = "fw-prod-asso1-deny-ingress"
-        priority                = 10000
-        description             = "deny all ingress traffic"
+        name                    = "fw-prod-ingress-allow-iap"
+        priority                = 8000
+        description             = "all nat ingress traffic"
         direction               = "INGRESS"
-        ranges                  = ["0.0.0.0/0"]
+        ranges                  = ["35.235.240.0/20"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = ["ssh", "rdp"]
+        target_service_accounts = null
+        log_config              = null
+        deny = [
+        ]
+        allow = [{
+          protocol = "tcp"
+          ports    = ["22", "8080", "3306", "4433", "80"]
+        }]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+      },
+
+
+    ]
+  },
+
+  fw-prod-ingress-allow-azure-gcp = {
+    network_name = "vpc-elasticrun-prod-as2-shared"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
+    rules = [
+      {
+        name                    = "fw-prod-ingress-allow-azure-gcp"
+        priority                = 8000
+        description             = "all nat ingress traffic"
+        direction               = "INGRESS"
+        ranges                  = ["10.210.0.0/16"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = ["ssh", "rdp"]
+        target_service_accounts = null
+        log_config              = null
+        deny = [
+        ]
+        allow = [{
+          protocol = "tcp"
+          ports    = ["3389", "22"]
+        }]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+        allow = [{
+          protocol = "icmp"
+          ports    = []
+        }]
+      },
+
+
+    ]
+  },
+
+  fw-prod-i-a-kafka-pod-to-pod = {
+    network_name = "vpc-elasticrun-prod-as2-shared"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
+    rules = [
+      {
+        name                    = "fw-prod-i-a-kafka-pod-to-pod"
+        priority                = 1000
+        description             = ""
+        direction               = "INGRESS"
+        ranges                  = ["172.20.48.90", "172.20.51.116", "172.20.48.158", "172.20.50.168", "172.20.0.0/16"]
         source_tags             = null
         source_service_accounts = null
         target_tags             = []
         target_service_accounts = null
         log_config              = null
-        deny = [{
-          protocol = "all"
-          ports    = []
-          }
+        deny = [
         ]
-        allow = []
+        allow = [{
+          protocol = "tcp"
+          ports    = ["10254", "443", "80"]
+        }]
+        deny = []
         log_config = {
           metadata = "EXCLUDE_ALL_METADATA"
         }
-      },
-    ]
-  }
 
-    
-  }
-  
+      },
+
+
+    ]
+  },
+
+  fw-prod-i-a-glb-health-check = {
+    network_name = "vpc-elasticrun-prod-as2-shared"
+    project_id   = "prj-prod-int-elasticrun-hostc9"
+    rules = [
+      {
+        name                    = "fw-prod-i-a-glb-health-check"
+        priority                = 1000
+        description             = ""
+        direction               = "INGRESS"
+        ranges                  = ["130.211.0.0/22", "35.191.0.0/16"]
+        source_tags             = null
+        source_service_accounts = null
+        target_tags             = []
+        target_service_accounts = null
+        log_config              = null
+        deny = [
+        ]
+        allow = [{
+          protocol = "tcp"
+          ports    = ["10254", "80"]
+        }]
+        deny = []
+        log_config = {
+          metadata = "EXCLUDE_ALL_METADATA"
+        }
+
+      },
+
+
+    ]
+  },
+}
+
 
 reserve_static_ip = [
   {
@@ -140,7 +241,7 @@ reserve_static_ip = [
     address_type = "EXTERNAL"
 
   },
-  
+
 
 
 ]
